@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Follow the Deal - Verification Engine</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background-color: #f7f7f2;
+      color: #1a1a1a;
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    header {
+      margin-bottom: 2.5rem;
+    }
+
+    .logo-line {
+      font-size: 0.8rem;
+      color: #666;
+      margin-bottom: 1.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+      line-height: 1.15;
+      margin-bottom: 0.25rem;
+      color: #1a1a1a;
+    }
+
+    .subtitle {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #444;
+      margin-bottom: 0.75rem;
+    }
+
+    .date {
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .intro {
+      font-size: 1.05rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.75;
+    }
+
+    .intro-highlight {
+      background-color: rgba(139, 90, 43, 0.05);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .warning-box {
+      background-color: rgba(139, 90, 43, 0.08);
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+
+    .warning-box-title {
+      font-weight: bold;
+      color: #8b5a2b;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: bold;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      color: #1a1a1a;
+    }
+
+    h3 {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: #6b5a4a;
+    }
+
+    .node {
+      border: 1px solid #d4d4c4;
+      border-radius: 3px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .node.highlight,
+    .node.critical {
+      /* Same as regular nodes - no special styling */
+    }
+
+    .node-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .node-number {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .node-title {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .badge {
+      font-size: 0.6rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.5rem;
+      background-color: #c75b39;
+      color: #fff;
+    }
+
+    .badge.error-prevention {
+      background-color: #c75b39;
+      color: #fff;
+    }
+
+    .badge.human-required {
+      background-color: #8b7355;
+      color: #fff;
+    }
+
+    .node-description {
+      font-size: 0.9rem;
+      color: #444;
+      line-height: 1.65;
+    }
+
+    .node-description strong {
+      color: #1a1a1a;
+    }
+
+    .arrow {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #c75b39;
+      margin: 1rem 0;
+    }
+
+    .arrow.small {
+      font-size: 1.125rem;
+      margin: 0.5rem 0;
+      color: #c75b39;
+    }
+
+    .pipeline-intro {
+      margin-bottom: 1.5rem;
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid #ddd;
+      margin-top: 3rem;
+    }
+
+    footer p {
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .checklist {
+      margin: 0.75rem 0;
+      padding-left: 1.25rem;
+      list-style: disc;
+    }
+
+    .checklist li {
+      margin-bottom: 0.35rem;
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    .checklist li::before {
+      display: none;
+    }
+
+    .checklist li::marker {
+      color: #666;
+    }
+
+    .defense-layers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin: 1.25rem 0;
+    }
+
+    .defense-layer {
+      border: 1px solid #d4d4c4;
+      border-radius: 3px;
+      padding: 0.75rem;
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .defense-layer-title {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #c75b39;
+      margin-bottom: 0.2rem;
+    }
+
+    .defense-layer-desc {
+      font-size: 0.85rem;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .defense-layers {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <p class="logo-line">Net Zero Lawyers Alliance</p>
+      <h1>Follow the Deal</h1>
+      <p class="subtitle">Verification Engine</p>
+      <p class="date">January 2026 · Full Specification</p>
+    </header>
+
+    <p class="intro">
+      Follow the Deal provides practical legal guidance for renewable energy projects in emerging markets.
+      Because this content will be generated or assisted by AI, Follow the Deal employs a rigorous multi-stage
+      verification system designed to catch errors, outdated information, and AI hallucinations before they reach users.
+    </p>
+
+    <div class="intro-highlight">
+      Every piece of legal content is independently verified against authoritative sources,
+      cross-checked for internal consistency, and where NZLA requires legal review, reviewed by
+      contributing lawyers before publication. No content is published on trust alone. Everything must be provable.
+    </div>
+
+    <div class="warning-box">
+      <div class="warning-box-title">Why This Matters</div>
+      AI language models can occasionally generate plausible-sounding but incorrect information:
+      misremembered laws, confused organisations, inaccurate costs, or outdated processes. In legal
+      guidance, even rare errors could cause real harm to project developers, investors, and communities.
+      The verification system ensures these errors are caught before publication.
+    </div>
+
+    <h2>AI Error Patterns in Legal Content</h2>
+
+    <p class="pipeline-intro">
+      When AI does produce errors, they tend to follow predictable patterns. The system specifically targets these:
+    </p>
+
+    <div class="defense-layers">
+      <div class="defense-layer">
+        <div class="defense-layer-title">Incorrect Legislation</div>
+        <div class="defense-layer-desc">AI may produce law references that follow correct formatting but cite laws that don't exist or are outdated</div>
+      </div>
+      <div class="defense-layer">
+        <div class="defense-layer-title">Confused Organisations</div>
+        <div class="defense-layer-desc">AI may confuse or misname government agencies, programs, or bodies</div>
+      </div>
+      <div class="defense-layer">
+        <div class="defense-layer-title">Unverified Numbers</div>
+        <div class="defense-layer-desc">AI may produce costs, timelines, or statistics that need verification against authoritative sources</div>
+      </div>
+      <div class="defense-layer">
+        <div class="defense-layer-title">Orphan Citations</div>
+        <div class="defense-layer-desc">AI may cite sources that have moved, changed, or don't contain the claimed information</div>
+      </div>
+      <div class="defense-layer">
+        <div class="defense-layer-title">Confident Errors</div>
+        <div class="defense-layer-desc">AI may state incorrect information without flagging uncertainty, making errors harder to spot</div>
+      </div>
+      <div class="defense-layer">
+        <div class="defense-layer-title">Internal Contradictions</div>
+        <div class="defense-layer-desc">AI may produce inconsistencies within a document: different timelines, costs, or requirements in different places</div>
+      </div>
+    </div>
+
+    <h2>Content Generation</h2>
+
+    <p class="pipeline-intro">
+      Verification catches errors, but the best approach is to reduce errors at the source.
+      Follow the Deal uses structured generation practices that make hallucinations less likely in the first place.
+    </p>
+
+    <div class="node highlight">
+      <div class="node-header">
+        <span class="node-title">Focused Context Windows</span>
+      </div>
+      <p class="node-description">
+        AI quality degrades when context becomes cluttered or contradictory ("context rot").
+        Each generation task receives only the information it needs: the specific checkpoint
+        being written, relevant legislation for that jurisdiction, and applicable templates.
+        No extraneous content that could confuse or contaminate the output.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node">
+      <div class="node-header">
+        <span class="node-title">Source-Grounded Generation</span>
+      </div>
+      <p class="node-description">
+        Content is never generated from the AI's general knowledge alone. Every generation
+        task includes authoritative source documents: official gazette extracts, government
+        ministry publications, verified legal texts. The AI synthesises and structures
+        this material rather than inventing from scratch.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node">
+      <div class="node-header">
+        <span class="node-title">Structured Output Templates</span>
+      </div>
+      <p class="node-description">
+        Content follows consistent templates that require specific, verifiable information
+        in defined fields. "Estimated timeline: [X] days" forces a concrete answer that
+        can be checked, rather than vague language that sounds plausible but says nothing.
+        Templates also ensure completeness: missing sections are obvious.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node">
+      <div class="node-header">
+        <span class="node-title">Checkpoint Segmentation</span>
+      </div>
+      <p class="node-description">
+        Complex topics are broken into discrete checkpoints, each generated independently.
+        This prevents the AI from losing track of details across a long document and makes
+        inconsistencies between sections easier to detect. Each checkpoint is small enough
+        to verify thoroughly.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node highlight">
+      <div class="node-header">
+        <span class="node-title">Citation-Required Generation</span>
+      </div>
+      <p class="node-description">
+        The AI is instructed to cite sources for every factual claim during generation,
+        not just provide citations for review later. Claims without sources are flagged
+        immediately. This shifts the burden: unsourced statements are treated as incomplete
+        rather than accepted by default.
+      </p>
+    </div>
+
+    <h2>14-Stage Verification Engine</h2>
+
+    <p class="pipeline-intro">
+      Every piece of content passes through 14 verification stages. Each stage targets
+      specific types of errors. Content earns points for passing checks, and scores determine whether
+      content can be published, needs review, or must be blocked.
+    </p>
+
+    <h3>Phase 1: Source & Link Verification</h3>
+
+    <div class="node">
+      <div class="node-header">
+        <span class="node-number">1.</span>
+        <span class="node-title">URL Accessibility Check</span>
+      </div>
+      <p class="node-description">
+        Every URL referenced in the content is tested. The system follows redirects and confirms
+        pages actually load. Dead links, timeouts, and broken redirects are flagged.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node highlight">
+      <div class="node-header">
+        <span class="node-number">2.</span>
+        <span class="node-title">Citation Content Verification</span>
+        <span class="badge error-prevention">Error Prevention</span>
+      </div>
+      <p class="node-description">
+        <strong>Just because a URL works doesn't mean the citation is accurate.</strong> This stage
+        downloads the actual content of each cited page and verifies it contains the information
+        claimed.
+        <br><br>
+        Uses both keyword matching and semantic similarity analysis to catch valid paraphrasing
+        while detecting misattribution. If a citation claims "the permit takes 30 days" but the
+        source says "45 days," this stage catches it.
+        <br><br>
+        Falls back to archive.org for dead links to recover historical content.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node">
+      <div class="node-header">
+        <span class="node-number">3.</span>
+        <span class="node-title">Source Authority Validation</span>
+      </div>
+      <p class="node-description">
+        Every factual claim must trace back to an authoritative source. The system maintains a
+        registry of trusted sources for each jurisdiction.
+        <br><br>
+        <strong>Accepted:</strong> Government ministry websites, official .gov domains, regulatory
+        bodies, development finance institutions (World Bank, AfDB, IFC, EBRD), peer-reviewed sources.
+        <br><br>
+        <strong>Rejected:</strong> Wikipedia, forums, social media, unverifiable sources.
+      </p>
+    </div>
+
+    <h3>Phase 2: Legal Reference Verification</h3>
+
+    <div class="node critical">
+      <div class="node-header">
+        <span class="node-number">4.</span>
+        <span class="node-title">Legislation Existence Check</span>
+        <span class="badge error-prevention">Error Prevention</span>
+      </div>
+      <p class="node-description">
+        <strong>This is a primary defence against AI errors.</strong> AI can sometimes produce
+        legislation references that follow correct formatting conventions but cite laws that don't exist or are outdated.
+        <br><br>
+        For every legislation reference, the system queries official government databases:
+        <br><br>
+        <strong>Mozambique:</strong> Boletim da República (Lei, Decreto, Resolução formats)
+        <br>
+        <strong>Morocco:</strong> Bulletin Officiel (Dahir, Décret formats in Arabic and French)
+        <br>
+        <strong>Vietnam:</strong> Official Gazette (Luật, Nghị định, Thông tư)
+        <br>
+        <strong>International:</strong> EUR-Lex for EU law, UNFCCC databases, treaty repositories
+        <br><br>
+        If a referenced law cannot be found in the official database, it is flagged as a
+        potential error and blocked pending human verification.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node highlight">
+      <div class="node-header">
+        <span class="node-number">5.</span>
+        <span class="node-title">Legislation Currency Check</span>
+      </div>
+      <p class="node-description">
+        Confirms that cited legislation is still in force and hasn't been repealed, superseded, or
+        significantly amended. A correctly-cited law from 2018 that was repealed in 2023 is just
+        as dangerous as a fabricated law.
+        <br><br>
+        The system tracks amendment histories and flags content citing superseded legislation for
+        immediate review.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node">
+      <div class="node-header">
+        <span class="node-number">6.</span>
+        <span class="node-title">Multi-Source Confirmation</span>
+        <span class="badge human-required">High-Risk Content</span>
+      </div>
+      <p class="node-description">
+        For high-risk content (binding legal requirements, safety information, regulatory deadlines),
+        verification against a single source is not sufficient. The system requires confirmation
+        from 2-3 independent sources.
+        <br><br>
+        "Independent" means different domains and ideally different publication dates. Two pages
+        from the same ministry website don't count as independent confirmation.
+        <br><br>
+        <strong>If sources conflict</strong> (one says 28 days, another says 42 days), the content
+        is blocked and flagged for human resolution rather than guessing.
+      </p>
+    </div>
+
+    <h3>Phase 3: Entity & Contact Verification</h3>
+
+    <div class="node critical">
+      <div class="node-header">
+        <span class="node-number">7.</span>
+        <span class="node-title">Organisation Existence Check</span>
+        <span class="badge error-prevention">Error Prevention</span>
+      </div>
+      <p class="node-description">
+        <strong>AI can sometimes confuse or misname organisations.</strong> Every named
+        organisation, government agency, regulatory body, or program mentioned in the content
+        must be verified to actually exist.
+        <br><br>
+        The system maintains a registry of known entities per jurisdiction and searches official
+        government websites to confirm any new entities. References to organisations that cannot
+        be verified are flagged for review.
+        <br><br>
+        <strong>Example catches:</strong> "Ministry of Renewable Energy Development" (doesn't exist
+        in that form), "National Solar Registration Authority" (confused with another body), "Green Energy Fast-Track
+        Program" (incorrect name).
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node highlight">
+      <div class="node-header">
+        <span class="node-number">8.</span>
+        <span class="node-title">Contact Information Verification</span>
+        <span class="badge error-prevention">Error Prevention</span>
+      </div>
+      <p class="node-description">
+        Phone numbers, email addresses, physical addresses, and website URLs for organisations
+        must be verified against official sources. AI can sometimes produce incorrect or outdated
+        contact details.
+        <br><br>
+        <strong>Verification methods:</strong>
+        <ul class="checklist">
+          <li>Phone numbers checked against official government directories</li>
+          <li>Email domains verified to match official organisation domains</li>
+          <li>Physical addresses validated against known office locations</li>
+          <li>Website URLs tested for accessibility and correct ownership</li>
+        </ul>
+      </p>
+    </div>
+
+    <h3>Phase 4: Numerical & Cost Verification</h3>
+
+    <div class="node critical">
+      <div class="node-header">
+        <span class="node-number">9.</span>
+        <span class="node-title">Numerical Grounding Check</span>
+        <span class="badge error-prevention">Error Prevention</span>
+      </div>
+      <p class="node-description">
+        <strong>Every number must have a source.</strong> AI can sometimes produce specific
+        figures ("$4,847.23", "exactly 47 days", "23.7% reduction") that sound authoritative
+        but may not be accurate.
+        <br><br>
+        Numbers without traceable sources are flagged. Unusually precise figures are flagged
+        for verification.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node">
+      <div class="node-header">
+        <span class="node-number">10.</span>
+        <span class="node-title">Cost Range Validation</span>
+      </div>
+      <p class="node-description">
+        Cost estimates are checked against known market ranges for each jurisdiction. The system
+        maintains benchmarks for renewable energy project costs, regulatory fees, and professional
+        services by country and project type. Implausible figures are flagged.
+      </p>
+    </div>
+
+    <h3>Phase 5: Consistency & Logic Verification</h3>
+
+    <div class="node critical">
+      <div class="node-header">
+        <span class="node-number">11.</span>
+        <span class="node-title">Internal Consistency Check</span>
+        <span class="badge error-prevention">Error Prevention</span>
+      </div>
+      <p class="node-description">
+        <strong>AI can sometimes produce inconsistencies.</strong> The system scans for internal
+        contradictions across the entire checkpoint:
+        <br><br>
+        <strong>Checks performed:</strong>
+        <ul class="checklist">
+          <li>Same timeline mentioned consistently (not "30 days" in one place, "6 weeks" elsewhere)</li>
+          <li>Same costs quoted consistently throughout</li>
+          <li>Contact information matches for the same organisation</li>
+          <li>Process steps don't contradict each other</li>
+          <li>No circular dependencies (Step A requires Step B, Step B requires Step A)</li>
+        </ul>
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node highlight">
+      <div class="node-header">
+        <span class="node-number">12.</span>
+        <span class="node-title">Cross-Checkpoint Consistency</span>
+      </div>
+      <p class="node-description">
+        Beyond internal consistency, the system checks for contradictions across related
+        checkpoints. If Checkpoint A says the energy regulator is "ARENE" but Checkpoint B
+        says it's "ARNE," that inconsistency is flagged.
+        <br><br>
+        This catches cases where AI generates internally-consistent but mutually-contradictory
+        content across different sections of the platform.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node">
+      <div class="node-header">
+        <span class="node-number">13.</span>
+        <span class="node-title">Temporal Logic Validation</span>
+      </div>
+      <p class="node-description">
+        Checks that timelines and dates make logical sense:
+        <br><br>
+        <ul class="checklist">
+          <li>No references to future dates as if they've already occurred</li>
+          <li>Historical dates verified (law passage dates, policy implementation dates)</li>
+          <li>Process timelines are realistic and don't contain impossibilities</li>
+          <li>Content freshness assessed (cost data from 2020 may be outdated by 2026)</li>
+        </ul>
+      </p>
+    </div>
+
+    <h3>Phase 6: Pattern-Based Error Detection</h3>
+
+    <div class="node critical">
+      <div class="node-header">
+        <span class="node-number">14.</span>
+        <span class="node-title">Error Pattern Matching</span>
+        <span class="badge error-prevention">Error Prevention</span>
+      </div>
+      <p class="node-description">
+        <strong>AI errors tend to follow detectable patterns.</strong> This stage applies
+        pattern-based detection rules learned from known AI failure modes:
+        <br><br>
+        <strong>Patterns flagged:</strong>
+        <ul class="checklist">
+          <li>Legislation references following correct format but not existing in databases</li>
+          <li>Organisations with plausible names but no online presence</li>
+          <li>Contact details that look correct but lead nowhere</li>
+          <li>Suspiciously round numbers mixed with suspiciously specific ones</li>
+          <li>"Orphan citations": properly formatted references that can't be verified</li>
+          <li>Claims presented with high confidence but no supporting evidence</li>
+        </ul>
+        <br>
+        Multiple patterns in the same content increase the risk score.
+      </p>
+    </div>
+
+    <h2>Ongoing Monitoring</h2>
+
+    <div class="node">
+      <div class="node-header">
+        <span class="node-title">Post-Publication Monitoring</span>
+      </div>
+      <p class="node-description">
+        Verification doesn't stop at publication. The system continuously monitors published
+        content for staleness:
+        <br><br>
+        <ul class="checklist">
+          <li>Cited legislation checked for amendments or repeal</li>
+          <li>Source URLs monitored for significant changes</li>
+          <li>Cost data flagged for review after age thresholds</li>
+          <li>Regulatory changes in target jurisdictions trigger content review</li>
+        </ul>
+        <br>
+        When changes are detected, affected content is flagged for re-verification and
+        content owners are notified.
+      </p>
+    </div>
+
+    <h2>What This Means for Users</h2>
+
+    <div class="intro-highlight">
+      <strong>When you use Follow the Deal guidance:</strong>
+      <br><br>
+      Every legal reference has been verified against official government databases.
+      Every organisation mentioned has been confirmed to exist. Every cost estimate has
+      been checked for plausibility. Every URL has been tested. Every citation has been
+      verified to actually say what is claimed.
+      <br><br>
+      Content that couldn't meet these standards either includes appropriate disclaimers
+      or was blocked from publication entirely.
+    </div>
+
+    <footer>
+      <p>Follow the Deal</p>
+      <p style="margin-top: 0.5rem; font-size: 0.75rem;">Developed by UPLO for the Net Zero Lawyers Alliance</p>
+    </footer>
+  </div>
+</body>
+</html>

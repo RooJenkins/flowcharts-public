@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Follow the Deal - Technical Implementation Guide</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      background-color: #f5f5f0;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    header {
+      margin-bottom: 3rem;
+    }
+
+    .logo-line {
+      font-size: 0.875rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    h1 {
+      font-size: 2.75rem;
+      font-weight: normal;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      font-size: 1.25rem;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+    }
+
+    .date {
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .intro {
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: normal;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #d4d4c4;
+    }
+
+    .node {
+      border: 1px solid #d4d4c4;
+      border-radius: 3px;
+      padding: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .node.highlight {
+      border-color: #005a50;
+      background-color: rgba(0, 90, 80, 0.03);
+    }
+
+    .node.technical {
+      border-color: #2d5a87;
+      background-color: rgba(45, 90, 135, 0.03);
+    }
+
+    .node-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .node-number {
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .node-title {
+      font-size: 1.125rem;
+    }
+
+    .tech-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .tech-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .tech-label {
+      font-weight: 600;
+      font-size: 0.8rem;
+      color: #2d5a87;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .tech-content {
+      font-size: 0.9rem;
+      color: #444;
+      line-height: 1.55;
+    }
+
+    .arrow {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #666;
+      margin: 1rem 0;
+    }
+
+    .arrow.small {
+      font-size: 1.125rem;
+      margin: 0.5rem 0;
+    }
+
+    .pipeline-intro {
+      margin-bottom: 1.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      font-size: 0.85rem;
+    }
+
+    th, td {
+      border: 1px solid #d4d4c4;
+      padding: 0.65rem;
+      text-align: left;
+    }
+
+    th {
+      background-color: rgba(45, 90, 135, 0.1);
+      font-weight: normal;
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid #d4d4c4;
+      margin-top: 2rem;
+    }
+
+    footer p {
+      font-size: 0.875rem;
+      color: #666;
+    }
+
+    .outcomes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .outcome {
+      border: 1px solid;
+      border-radius: 3px;
+      padding: 1rem;
+    }
+
+    .outcome.approved {
+      border-color: #4a7c59;
+      background-color: rgba(74, 124, 89, 0.05);
+    }
+
+    .outcome.approved h3 {
+      color: #4a7c59;
+    }
+
+    .outcome.review {
+      border-color: #b8860b;
+      background-color: rgba(184, 134, 11, 0.05);
+    }
+
+    .outcome.review h3 {
+      color: #b8860b;
+    }
+
+    .outcome.blocked {
+      border-color: #8b4513;
+      background-color: rgba(139, 69, 19, 0.05);
+    }
+
+    .outcome.blocked h3 {
+      color: #8b4513;
+    }
+
+    .outcome h3 {
+      font-size: 1rem;
+      font-weight: normal;
+      margin-bottom: 0.5rem;
+    }
+
+    .outcome p {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .outcomes {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        font-size: 0.75rem;
+      }
+
+      th, td {
+        padding: 0.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <p class="logo-line">Net Zero Lawyers Alliance</p>
+      <h1>Follow the Deal</h1>
+      <p class="subtitle">Verification System - Technical Implementation Guide</p>
+      <p class="date">January 2026</p>
+    </header>
+
+    <p class="intro">
+      This document explains how each step of the verification pipeline works under the hood.
+      For each layer, you'll find the objective, the tools and techniques used, and a plain-language
+      explanation of the technical process.
+    </p>
+
+    <h2>Content Entry</h2>
+
+    <div class="node technical">
+      <div class="node-header">
+        <span class="node-title">Content Input Processing</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Accept checkpoint content and prepare it for the verification pipeline by extracting all
+          verifiable elements (URLs, legal references, costs, contacts) into a structured format.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          The pipeline receives a checkpoint ID, its full content object, and jurisdiction identifier
+          (Mozambique, Morocco, Vietnam, or international). It scans through every section: legal
+          references, estimated costs, key contacts, step-by-step instructions, tips, and FAQs. It
+          extracts anything that can be independently verified. Each extracted element is tagged
+          with its type (URL, gazette reference, cost figure, etc.) and queued for the appropriate
+          verification layer.
+          <br><br>
+          <strong>OCR Processing:</strong> For documents containing tables, fee schedules, or scanned
+          content, the system extracts text using OCR (Tesseract) and preserves table structure so
+          cost figures can be validated.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Tools</div>
+        <div class="tech-content">
+          JSON parsing, jurisdiction-specific regex patterns, Tesseract OCR, parallel task queue.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <h2>The 10-Layer Pipeline</h2>
+
+    <p class="pipeline-intro">
+      Each layer performs a specific verification function. Content flows through all applicable
+      layers, earning points based on successful checks. Layers that don't apply to a particular
+      piece of content are skipped without penalty.
+    </p>
+
+    <div class="node technical">
+      <div class="node-header">
+        <span class="node-number">1.</span>
+        <span class="node-title">URL Verification</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Confirm that every URL referenced in the content is actually accessible.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          HTTP HEAD request to each URL with 15-second timeout and 2 retries. Follows up to 5
+          redirects automatically. Records status code, response time, and content type. Extended
+          timeouts for jurisdictions with less reliable connectivity.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Scoring</div>
+        <div class="tech-content">
+          15 points max. Partial credit: 4/5 URLs passing = 80% of points.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical highlight">
+      <div class="node-header">
+        <span class="node-number">2.</span>
+        <span class="node-title">Official Gazette Reference Checking</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Verify that cited legislation actually exists in the relevant official government database
+          and hasn't been repealed.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Jurisdiction-specific pattern matching validates reference format:
+          <br><br>
+          <strong>Mozambique:</strong> Boletim da República, Lei, Decreto, Resolução formats.
+          <br>
+          <strong>Morocco:</strong> Bulletin Officiel, Dahir, Décret (Arabic and French).
+          <br>
+          <strong>Vietnam:</strong> Official Gazette, Luật, Nghị định, Thông tư formats.
+          <br>
+          <strong>International:</strong> EU regulations (EUR-Lex), UNFCCC decisions.
+          <br><br>
+          Then queries official databases or performs structured web searches to confirm the law
+          exists and is still in force.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Scoring</div>
+        <div class="tech-content">
+          20 points max. Valid format = 10 points. Confirmed by official source = +10.
+          Superseded legislation = -10.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical">
+      <div class="node-header">
+        <span class="node-number">3.</span>
+        <span class="node-title">Cost Validation</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Check that cost estimates are realistic for the jurisdiction and not AI-fabricated.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Sanity checks: ranges make sense (low < high), not unrealistically wide (>10x spread).
+          Flags excessive precision: "$4,847.23" is suspicious, while "$4,500–5,500" is normal.
+          Compares against market rate benchmarks for renewable energy projects by jurisdiction.
+          Currency conversion and purchasing power parity adjustments applied.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Scoring</div>
+        <div class="tech-content">
+          Minimum 75% confidence required to pass.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical highlight">
+      <div class="node-header">
+        <span class="node-number">4.</span>
+        <span class="node-title">Source Validation</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Ensure factual claims trace back to authoritative sources.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Maintains a registry of approved source types per jurisdiction:
+          <br><br>
+          • Government sources (ministry websites, .gov domains)
+          <br>
+          • Regulatory bodies (energy regulators, environmental agencies)
+          <br>
+          • Development finance institutions (World Bank, AfDB, IFC)
+          <br>
+          • Academic sources (peer-reviewed journals)
+          <br><br>
+          Unrecognised sources flagged for review.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical">
+      <div class="node-header">
+        <span class="node-number">5.</span>
+        <span class="node-title">Citation Checking</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Verify citations actually contain the claimed information, not just that the page exists.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Downloads page content, strips HTML to plain text, then performs two levels of matching:
+          <br><br>
+          <strong>Keyword matching:</strong> Searches for expected terms.
+          <br>
+          <strong>Semantic similarity:</strong> Converts source text and claim into vector embeddings
+          (multilingual sentence transformer). Calculates cosine similarity. Threshold: ≥0.80 for
+          match. This catches valid paraphrasing (e.g., "DNO notification is mandatory" ≈ "you must
+          tell the distribution operator").
+          <br><br>
+          Falls back to archive.org for dead links.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Scoring</div>
+        <div class="tech-content">
+          15 points max. Based on keyword match % combined with semantic similarity score.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical highlight">
+      <div class="node-header">
+        <span class="node-number">6.</span>
+        <span class="node-title">Multi-Source Validation</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          For high-risk content, require confirmation from multiple independent sources.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          High-risk content (legal, safety) requires 2-3 independent sources. "Independent" means
+          different domains and ideally different publication dates. If sources conflict (one says
+          28 days, another says 42), flags for human review rather than picking automatically.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Scoring</div>
+        <div class="tech-content">
+          Full points for 3+ agreeing sources. Reduced for 2 sources. Major penalty for conflicts.
+          Only triggers for high-risk content types.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical">
+      <div class="node-header">
+        <span class="node-number">7.</span>
+        <span class="node-title">Temporal Validation</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Ensure content is current, but be smart about it.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Tracks three dates: content created, last verified, source last modified. Different
+          freshness requirements by content type (cost estimates go stale after 3 months, but
+          process documentation can remain valid for years). Checks whether the source has been
+          updated since last verification. If the government updates a regulation, that triggers
+          review regardless of age.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Scoring</div>
+        <div class="tech-content">
+          15 points max. Classification: current, aging, stale, or expired.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical highlight">
+      <div class="node-header">
+        <span class="node-number">8.</span>
+        <span class="node-title">Consistency Checking</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Detect internal contradictions, a common sign of AI errors.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Cross-references across the entire checkpoint:
+          <br><br>
+          • Process steps in logical order
+          <br>
+          • Timelines don't contain impossibilities (28 days ≠ "about 2 weeks")
+          <br>
+          • Same item has same price wherever mentioned
+          <br>
+          • Contact information consistent throughout
+          <br>
+          • Circular dependency detection (if A requires B and B requires A = error)
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Scoring</div>
+        <div class="tech-content">
+          18 points max. Each contradiction reduces score. Circular dependencies = critical.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical highlight">
+      <div class="node-header">
+        <span class="node-number">9.</span>
+        <span class="node-title">Hallucination Detection</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Identify content likely fabricated by AI.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Looks for telltale signs of AI fabrication:
+          <br><br>
+          • Suspiciously specific numbers without sources
+          <br>
+          • Legislation references that follow the right format but don't exist
+          <br>
+          • Contact details for organisations that can't be verified
+          <br>
+          • "Orphan references" that look properly formatted but lead nowhere
+          <br><br>
+          Each flag assigned a confidence score. High-confidence hallucination on legal content
+          triggers automatic blocking.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical">
+      <div class="node-header">
+        <span class="node-number">10.</span>
+        <span class="node-title">Confidence Calculation & Gating</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Objective</div>
+        <div class="tech-content">
+          Aggregate results and make the publish/flag/block decision.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Weighted scoring where different checks contribute different amounts. Score calculated
+          as percentage of applicable checks only. If content has no legislation references, gazette
+          checking is skipped entirely without penalty. Different content types have different
+          thresholds: legal references need 85%, tips can publish at 55%.
+        </div>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">Outcomes</div>
+        <div class="tech-content">
+          <strong>Verified (85%+):</strong> Clear for publication.
+          <br>
+          <strong>Needs Review (65-84%):</strong> Flagged for human review.
+          <br>
+          <strong>Blocked (<65%):</strong> Cannot publish until issues resolved.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <h2>Publication Outcomes</h2>
+
+    <div class="outcomes">
+      <div class="outcome approved">
+        <h3>✓ Verified</h3>
+        <p>Score 85-100%. Passes all applicable checks. Cleared for publication.</p>
+      </div>
+      <div class="outcome review">
+        <h3>⚠ Needs Review</h3>
+        <p>Score 65-84%. Minor issues detected. Enters review queue for contributing lawyers.</p>
+      </div>
+      <div class="outcome blocked">
+        <h3>✕ Blocked</h3>
+        <p>Score below 65%. Critical issues found. Cannot publish until resolved.</p>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <h2>Review Workflow</h2>
+
+    <div class="node technical">
+      <div class="node-header">
+        <span class="node-title">Review Assignment</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Tasks assigned based on expertise: legal issues to lawyers with jurisdiction knowledge,
+          technical content to subject matter experts, cost issues to professionals with local
+          market experience. Complex issues escalate to NZLA Secretariat.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node technical">
+      <div class="node-header">
+        <span class="node-title">Feedback Loop</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          When reviewers correct the system, the correction is captured:
+          <br><br>
+          • What was wrong
+          <br>
+          • Why it was wrong
+          <br>
+          • Whether it was a false positive or false negative
+          <br><br>
+          Patterns are analysed to improve detection rules. If experts repeatedly correct a
+          specific type of error, that pattern is added to the detection logic.
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow">↓</div>
+
+    <h2>Ongoing Monitoring</h2>
+
+    <div class="node technical">
+      <div class="node-header">
+        <span class="node-title">Change Detection</span>
+      </div>
+
+      <div class="tech-section">
+        <div class="tech-label">How It Works</div>
+        <div class="tech-content">
+          Periodic monitoring job checks whether cited legislation has been amended or repealed,
+          and whether source URLs have changed significantly. When changes detected:
+          <br><br>
+          • Flags affected content for re-verification
+          <br>
+          • Notifies content owners
+          <br>
+          • Creates review task if needed
+        </div>
+      </div>
+    </div>
+
+    <h2>Confidence Thresholds</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Content Type</th>
+          <th>Minimum Score</th>
+          <th>Action if Below</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Legal references</td>
+          <td>85%</td>
+          <td>Block + require expert review</td>
+        </tr>
+        <tr>
+          <td>Risks / Safety</td>
+          <td>80%</td>
+          <td>Block + require expert review</td>
+        </tr>
+        <tr>
+          <td>Process steps</td>
+          <td>75%</td>
+          <td>Block + require review</td>
+        </tr>
+        <tr>
+          <td>Cost estimates</td>
+          <td>70%</td>
+          <td>Flag + add disclaimer</td>
+        </tr>
+        <tr>
+          <td>Timelines</td>
+          <td>65%</td>
+          <td>Flag + add disclaimer</td>
+        </tr>
+        <tr>
+          <td>Tips / FAQs</td>
+          <td>55%</td>
+          <td>Allow with disclaimer</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <footer>
+      <p>Follow the Deal · A Net Zero Lawyers Alliance Initiative</p>
+      <p style="margin-top: 0.5rem; font-size: 0.75rem;">Developed with UPLO to accelerate renewable energy deployment in emerging markets</p>
+    </footer>
+  </div>
+</body>
+</html>
