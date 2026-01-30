@@ -384,10 +384,10 @@
       </p>
     </div>
 
-    <h2>14-Stage Verification Engine</h2>
+    <h2>18-Stage Verification Engine</h2>
 
     <p class="pipeline-intro">
-      Every piece of content passes through 14 verification stages. Each stage targets
+      Every piece of content passes through 18 verification stages. Each stage targets
       specific types of errors. Content earns points for passing checks, and scores determine whether
       content can be published, needs review, or must be blocked.
     </p>
@@ -444,11 +444,37 @@
       </p>
     </div>
 
-    <h3>Phase 2: Legal Reference Verification</h3>
+    <div class="arrow small">↓</div>
 
     <div class="node critical">
       <div class="node-header">
         <span class="node-number">4.</span>
+        <span class="node-title">Legal Concept Mapping</span>
+        <span class="badge error-prevention">Error Prevention</span>
+      </div>
+      <p class="node-description">
+        <strong>Translation is not enough—legal concepts must map correctly.</strong> When working
+        across jurisdictions and languages, the system verifies that translated terms correspond
+        to equivalent legal concepts, not just linguistic equivalents.
+        <br><br>
+        <strong>Key distinctions verified:</strong>
+        <ul class="checklist">
+          <li>"Concession" (Civil Law) vs "Lease" (Common Law)—different liability structures</li>
+          <li>"Autorisation" vs "Permis" vs "Licence"—different administrative weight</li>
+          <li>"Force majeure" definitions vary significantly across legal systems</li>
+          <li>Land tenure concepts (usufruct, emphyteusis) have no direct Common Law equivalents</li>
+        </ul>
+        <br>
+        Content using cross-jurisdictional legal concepts is flagged for review by lawyers
+        familiar with both legal traditions.
+      </p>
+    </div>
+
+    <h3>Phase 2: Legal Reference Verification</h3>
+
+    <div class="node critical">
+      <div class="node-header">
+        <span class="node-number">5.</span>
         <span class="node-title">Legislation Existence Check</span>
         <span class="badge error-prevention">Error Prevention</span>
       </div>
@@ -475,7 +501,7 @@
 
     <div class="node highlight">
       <div class="node-header">
-        <span class="node-number">5.</span>
+        <span class="node-number">6.</span>
         <span class="node-title">Legislation Currency Check</span>
       </div>
       <p class="node-description">
@@ -492,7 +518,7 @@
 
     <div class="node">
       <div class="node-header">
-        <span class="node-number">6.</span>
+        <span class="node-number">7.</span>
         <span class="node-title">Multi-Source Confirmation</span>
         <span class="badge human-required">High-Risk Content</span>
       </div>
@@ -509,11 +535,37 @@
       </p>
     </div>
 
+    <div class="arrow small">↓</div>
+
+    <div class="node critical">
+      <div class="node-header">
+        <span class="node-number">8.</span>
+        <span class="node-title">Normative Hierarchy Check</span>
+        <span class="badge error-prevention">Error Prevention</span>
+      </div>
+      <p class="node-description">
+        <strong>A law may be valid but superseded.</strong> Legislation can be "current" (not
+        formally repealed) yet effectively overridden by newer, more specific laws. The system
+        checks for conflict of laws situations.
+        <br><br>
+        <strong>Hierarchy rules applied:</strong>
+        <ul class="checklist">
+          <li><em>Lex specialis derogat legi generali</em>—specific laws override general ones (Investment Code trumps General Tax Decree)</li>
+          <li><em>Lex posterior derogat legi priori</em>—newer laws override older ones on the same subject</li>
+          <li>Constitutional provisions override ordinary legislation</li>
+          <li>Ratified international treaties may override domestic law</li>
+        </ul>
+        <br>
+        When potentially conflicting laws apply to the same situation, the system flags the
+        conflict for legal review rather than defaulting to one interpretation.
+      </p>
+    </div>
+
     <h3>Phase 3: Entity & Contact Verification</h3>
 
     <div class="node critical">
       <div class="node-header">
-        <span class="node-number">7.</span>
+        <span class="node-number">9.</span>
         <span class="node-title">Organisation Existence Check</span>
         <span class="badge error-prevention">Error Prevention</span>
       </div>
@@ -536,7 +588,7 @@
 
     <div class="node highlight">
       <div class="node-header">
-        <span class="node-number">8.</span>
+        <span class="node-number">10.</span>
         <span class="node-title">Contact Information Verification</span>
         <span class="badge error-prevention">Error Prevention</span>
       </div>
@@ -559,7 +611,7 @@
 
     <div class="node critical">
       <div class="node-header">
-        <span class="node-number">9.</span>
+        <span class="node-number">11.</span>
         <span class="node-title">Numerical Grounding Check</span>
         <span class="badge error-prevention">Error Prevention</span>
       </div>
@@ -577,7 +629,7 @@
 
     <div class="node">
       <div class="node-header">
-        <span class="node-number">10.</span>
+        <span class="node-number">12.</span>
         <span class="node-title">Cost Range Validation</span>
       </div>
       <p class="node-description">
@@ -587,11 +639,39 @@
       </p>
     </div>
 
+    <div class="arrow small">↓</div>
+
+    <div class="node critical">
+      <div class="node-header">
+        <span class="node-number">13.</span>
+        <span class="node-title">De Facto Reality Check</span>
+        <span class="badge human-required">Market Reality</span>
+      </div>
+      <p class="node-description">
+        <strong>What the law says vs what actually happens.</strong> In emerging markets, official
+        timelines and processes often differ significantly from practice. A legally mandated
+        "30-day permit" may routinely take 6 months due to administrative backlogs, informal
+        requirements, or capacity constraints.
+        <br><br>
+        <strong>Reality checks performed:</strong>
+        <ul class="checklist">
+          <li>Official timelines compared against market practitioner reports</li>
+          <li>Stated costs verified against recent transaction data where available</li>
+          <li>Process steps checked against practitioner experience (informal requirements)</li>
+          <li>Capacity constraints flagged (e.g., single-person approval bottlenecks)</li>
+        </ul>
+        <br>
+        When significant gaps exist between de jure (legal) and de facto (practical) reality,
+        content includes both perspectives with clear labelling: "Legal requirement: 30 days.
+        Typical practice: 4-6 months."
+      </p>
+    </div>
+
     <h3>Phase 5: Consistency & Logic Verification</h3>
 
     <div class="node critical">
       <div class="node-header">
-        <span class="node-number">11.</span>
+        <span class="node-number">14.</span>
         <span class="node-title">Internal Consistency Check</span>
         <span class="badge error-prevention">Error Prevention</span>
       </div>
@@ -614,7 +694,7 @@
 
     <div class="node highlight">
       <div class="node-header">
-        <span class="node-number">12.</span>
+        <span class="node-number">15.</span>
         <span class="node-title">Cross-Checkpoint Consistency</span>
       </div>
       <p class="node-description">
@@ -631,7 +711,7 @@
 
     <div class="node">
       <div class="node-header">
-        <span class="node-number">13.</span>
+        <span class="node-number">16.</span>
         <span class="node-title">Temporal Logic Validation</span>
       </div>
       <p class="node-description">
@@ -650,7 +730,7 @@
 
     <div class="node critical">
       <div class="node-header">
-        <span class="node-number">14.</span>
+        <span class="node-number">17.</span>
         <span class="node-title">Error Pattern Matching</span>
         <span class="badge error-prevention">Error Prevention</span>
       </div>
@@ -669,6 +749,35 @@
         </ul>
         <br>
         Multiple patterns in the same content increase the risk score.
+      </p>
+    </div>
+
+    <div class="arrow small">↓</div>
+
+    <div class="node critical">
+      <div class="node-header">
+        <span class="node-number">18.</span>
+        <span class="node-title">Negative Claim Verification</span>
+        <span class="badge human-required">Human Required</span>
+      </div>
+      <p class="node-description">
+        <strong>Absence of evidence is not evidence of absence.</strong> Claims that something
+        is <em>not</em> required are inherently harder to verify than claims that something <em>is</em>
+        required. AI cannot reliably prove a negative.
+        <br><br>
+        <strong>High-risk negative claims that trigger mandatory human review:</strong>
+        <ul class="checklist">
+          <li>"No permit/licence/authorisation is required"</li>
+          <li>"Tax exempt" or "no tax applies"</li>
+          <li>"No environmental assessment needed"</li>
+          <li>"No local content requirements"</li>
+          <li>"No community consultation required"</li>
+          <li>Any claim of regulatory exemption or exception</li>
+        </ul>
+        <br>
+        These claims cannot be verified by confirming a source exists—they require confirmation
+        that no contradicting requirement exists, which demands exhaustive legal research.
+        All high-risk negative claims are blocked pending expert legal review.
       </p>
     </div>
 
